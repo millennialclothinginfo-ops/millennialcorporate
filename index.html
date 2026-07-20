@@ -1944,7 +1944,9 @@
         <h2>Our Work Gallery</h2>
       </div>
       <div class="products-grid" id="productsGrid"></div>
-      <p class="products-note">আমাদের সম্পন্ন কাজের কিছু নমুনা — প্রতিটি অর্ডারের প্রোডাক্ট, কোম্পানি, পরিমাণ ও ডেলিভারি সময় উল্লেখ করা আছে।</p>
+      <div style="text-align:center;">
+        <button class="btn btn-amber" id="productsSeeMoreBtn" style="margin-top:22px;" onclick="toggleProductsSeeMore()" type="button">See More</button>
+      </div>
     </div>
   </section>
 
@@ -3044,10 +3046,14 @@
     }
   ];
 
+  var PRODUCTS_INITIAL_COUNT = 4;
+  var productsSeeMoreExpanded = false;
+
   function renderProductsGrid(){
     var grid = document.getElementById('productsGrid');
     if(!grid) return;
-    grid.innerHTML = GALLERY_ITEMS.map(function(item){
+    var itemsToShow = productsSeeMoreExpanded ? GALLERY_ITEMS : GALLERY_ITEMS.slice(0, PRODUCTS_INITIAL_COUNT);
+    grid.innerHTML = itemsToShow.map(function(item){
       var img = item.images[0] || {bg:'linear-gradient(135deg,#6B6862,#1C1B19)', label:item.title};
       var imgInner = img.src
         ? '<img src="' + img.src + '" alt="' + item.title + '" loading="lazy"><span class="gallery-img-label">' + img.label + '</span>'
@@ -3064,8 +3070,23 @@
         '</div>' +
       '</div>';
     }).join('');
+
+    var seeMoreBtn = document.getElementById('productsSeeMoreBtn');
+    if(seeMoreBtn){
+      if(GALLERY_ITEMS.length <= PRODUCTS_INITIAL_COUNT){
+        seeMoreBtn.style.display = 'none';
+      } else {
+        seeMoreBtn.style.display = '';
+        seeMoreBtn.textContent = productsSeeMoreExpanded ? 'See Less' : 'See More';
+      }
+    }
   }
   renderProductsGrid();
+
+  window.toggleProductsSeeMore = function(){
+    productsSeeMoreExpanded = !productsSeeMoreExpanded;
+    renderProductsGrid();
+  };
 
   function pcardOptionBlock(label, type, items){
     if(!items || !items.length) return '';
